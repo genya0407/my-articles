@@ -1,0 +1,10 @@
+[Unit]
+Description=Heisei Internet History Notifier
+
+[Timer]
+OnCalendar=*:0,15,30,45
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+
