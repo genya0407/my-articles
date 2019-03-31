@@ -9,6 +9,6 @@ cat ~/my-articles/feeds_me.toml | bundle exec ruby crawl.rb | bundle exec ruby g
 
 cd "$ARTICLES_DIR"
 git pull
-bundle install --path vendor/bundle
+PKG_CONFIG_PATH=/usr/lib/imagemagick6/pkgconfig bundle install --path vendor/bundle
 BLOG_FEED_PATH=~/feeds/dist/feeds.json bundle exec ruby site.rb
 cp -r _site/* /var/articles
