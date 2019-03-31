@@ -1,0 +1,11 @@
+[Unit]
+Description=articles.kuminecraft.xyz
+
+[Service]
+WorkingDirectory=/home/sangenya/my-articles
+Type=oneshot
+User=sangenya
+Environment="FEEDS_DIR=/home/sangenya/feeds"
+Environment="ARTICLES_DIR=/home/sangenya/my-articles"
+ExecStart=/home/sangenya/my-articles/update.sh
+
