@@ -1,3 +1,5 @@
 _site/
 vendor/
 .bundle/
+static/thumbnails/*
+!static/thumbnails/.keep
