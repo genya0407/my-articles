@@ -1,0 +1,25 @@
+GIT
+  remote: https://github.com/genya0407/rakyll
+  revision: e16c08d3065ea08f2d2c7071d893290d827b3409
+  ref: e16c08d3065ea08f2d2c7071d893290d827b3409
+  specs:
+    rakyll (0.1.1)
+      redcarpet (~> 3.4)
+      yaml-front-matter (~> 0.0.1)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    httpclient (2.8.3)
+    redcarpet (3.4.0)
+    yaml-front-matter (0.0.1)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  httpclient
+  rakyll!
+
+BUNDLED WITH
+   1.17.2
