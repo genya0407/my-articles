@@ -12,6 +12,7 @@ GEM
   specs:
     httpclient (2.8.3)
     redcarpet (3.4.0)
+    rmagick (3.0.0)
     yaml-front-matter (0.0.1)
 
 PLATFORMS
@@ -20,6 +21,7 @@ PLATFORMS
 DEPENDENCIES
   httpclient
   rakyll!
+  rmagick
 
 BUNDLED WITH
    1.17.2

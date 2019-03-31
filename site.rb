@@ -3,6 +3,7 @@ require 'httpclient'
 require 'json'
 require 'tmpdir'
 require 'securerandom'
+require 'rmagick'
 
 BLOG_FEED_PATH = ENV.fetch('BLOG_FEED_PATH')
 
@@ -13,10 +14,10 @@ SourceFeed = Struct.new(:title, :url)
 
 THUMBNAIL_DIR = 'static/thumbnails'
 
-def download_thumbnail(icon_url)
+def download_thumbnail(icon_url, dest_dir)
   client = HTTPClient.new
   thumbnail_fname = "#{SecureRandom.uuid}#{File.extname(icon_url)}"
-  thumbnail_path = "#{THUMBNAIL_DIR}/#{thumbnail_fname}"
+  thumbnail_path = "#{dest_dir}/#{thumbnail_fname}"
   open(thumbnail_path, 'wb') do |file|
     client.get_content(icon_url) do |chunk|
       file.write chunk
@@ -26,15 +27,36 @@ def download_thumbnail(icon_url)
   return thumbnail_fname
 end
 
+def read_background_white(image_path)
+  img_list = Magick::ImageList.new
+  img_list.read(image_path)
+  img_list.new_image(img_list.first.columns, img_list.first.rows) { self.background_color = "white" }
+  img_list.reverse.flatten_images
+end
+
+def compress_thumbnail(thumbnail_path, dest_dir, max_width: 200, max_height: 200)
+  img = read_background_white(thumbnail_path)
+  new_img = img.resize_to_fit(max_width, max_height)
+  new_img.background_color = 'white'
+  new_fname = "#{SecureRandom.uuid}.jpg"
+  new_img.write("#{dest_dir}/#{new_fname}")
+  return new_fname
+end
+
 _articles = JSON.parse(File.read(BLOG_FEED_PATH), symbolize_names: true).map do |record|
   Article.new(*(ArticleAttributes.map { |k| record[k] }))
 end.sort_by(&:published_at).reverse
 
-articles = _articles.map do |article|
-  unless article.icon_url.nil?
-    article.icon_url = "/#{THUMBNAIL_DIR}/#{download_thumbnail(article.icon_url)}"
+articles = Dir.mktmpdir do |tmpdir|
+  _articles.map do |article|
+    unless article.icon_url.nil?
+      original_fname = download_thumbnail(article.icon_url, tmpdir)
+      compressed_fname = compress_thumbnail("#{tmpdir}/#{original_fname}", tmpdir)
+      FileUtils.copy("#{tmpdir}/#{compressed_fname}", THUMBNAIL_DIR)
+      article.icon_url = "/#{THUMBNAIL_DIR}/#{compressed_fname}"
+    end
+    article
   end
-  article
 end
 
 Rakyll.dsl do
