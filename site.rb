@@ -11,26 +11,30 @@ Article = Struct.new(*ArticleAttributes)
 
 SourceFeed = Struct.new(:title, :url)
 
+THUMBNAIL_DIR = 'static/thumbnails'
+
+def download_thumbnail(icon_url)
+  client = HTTPClient.new
+  thumbnail_fname = "#{SecureRandom.uuid}#{File.extname(icon_url)}"
+  thumbnail_path = "#{THUMBNAIL_DIR}/#{thumbnail_fname}"
+  open(thumbnail_path, 'wb') do |file|
+    client.get_content(icon_url) do |chunk|
+      file.write chunk
+    end
+  end
+
+  return thumbnail_fname
+end
+
 _articles = JSON.parse(File.read(BLOG_FEED_PATH), symbolize_names: true).map do |record|
   Article.new(*(ArticleAttributes.map { |k| record[k] }))
 end.sort_by(&:published_at).reverse
 
-articles = Dir.mktmpdir do |tmpdir|
-  client = HTTPClient.new
-  _articles.map do |article|
-    unless article.icon_url.nil?
-      thumbnail_fname = "#{SecureRandom.uuid}#{File.extname(article.icon_url)}"
-      thumbnail_path = "#{tmpdir}/#{thumbnail_fname}"
-      open(thumbnail_path, 'wb') do |file|
-        client.get_content(article.icon_url) do |chunk|
-          file.write chunk
-        end
-      end
-      article.icon_url = "/static/thumbnails/#{thumbnail_fname}"
-      FileUtils.copy(thumbnail_path, './static/thumbnails')
-    end
-    article
+articles = _articles.map do |article|
+  unless article.icon_url.nil?
+    article.icon_url = "/#{THUMBNAIL_DIR}/#{download_thumbnail(article.icon_url)}"
   end
+  article
 end
 
 Rakyll.dsl do
