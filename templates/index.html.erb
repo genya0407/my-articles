@@ -43,7 +43,12 @@
             </div>
             <div style='flex: 3; margin: 5px; margin-left: 20px;'>
               <div>
-                <h3><%= article.title %></h3>
+                <h3>
+                  <%= article.title %>
+                  <span style='margin-left: 0.5em; font-size: x-small;'>
+                    <a style='color: red;' href='<%= article.hatebu_url %>'><%= article.hatebu_count %> users</a>
+                  </span>
+                </h3>
               </div>
               <div style='text-indent: 1em; word-break: break-all;'>
                 <%= article.abstract[0..200] %> ...

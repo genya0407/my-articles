@@ -4,11 +4,29 @@ require 'json'
 require 'tmpdir'
 require 'securerandom'
 require 'rmagick'
+require 'uri'
+require 'listen'
 
 BLOG_FEED_PATH = ENV.fetch('BLOG_FEED_PATH')
 
 ArticleAttributes = [:entry_url, :title, :abstract_html, :abstract, :icon_url, :published_at]
-Article = Struct.new(*ArticleAttributes)
+class Article < Struct.new(*ArticleAttributes)
+  def hatebu_count
+    @_hatebu_count ||= begin
+      client = HTTPClient.new
+      client
+        .get_content("https://api.b.st-hatena.com/entry.count?url=#{URI.encode_www_form_component(self.entry_url)}")
+        .to_i
+    end
+  end
+
+  def hatebu_url
+    @_hatebu_url ||= begin
+      without_scheme = self.entry_url.sub(/https?:\/\//, '')
+      "http://b.hatena.ne.jp/entry/s/#{without_scheme}"
+    end
+  end
+end
 
 SourceFeed = Struct.new(:title, :url)
 
@@ -59,16 +77,25 @@ articles = Dir.mktmpdir do |tmpdir|
   end
 end
 
-Rakyll.dsl do
-  copy 'static/*/*'
+rakyll = proc do
+  Rakyll.dsl do
+    copy 'static/*/*'
 
-  create 'index.html' do
-    @source_feeds = [
-      SourceFeed.new('さんちゃのブログ', 'https://dawn.hateblo.jp'),
-      SourceFeed.new('genya0407 - Qiita', 'https://qiita.com/genya0407')
-    ]
-    @articles = articles
-    @default_icon_url = '/static/images/default.jpg'
-    apply 'index.html.erb'
+    create 'index.html' do
+      @source_feeds = [
+        SourceFeed.new('さんちゃのブログ', 'https://dawn.hateblo.jp'),
+        SourceFeed.new('genya0407 - Qiita', 'https://qiita.com/genya0407')
+      ]
+      @articles = articles
+      @default_icon_url = '/static/images/default.jpg'
+      apply 'index.html.erb'
+    end
   end
+
+  puts "[#{Time.now}] Generated."
 end
+
+rakyll.call
+listener = Listen.to 'templates', &rakyll
+listener.start
+sleep
