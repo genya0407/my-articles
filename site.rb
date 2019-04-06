@@ -96,6 +96,9 @@ rakyll = proc do
 end
 
 rakyll.call
-listener = Listen.to 'templates', &rakyll
-listener.start
-sleep
+
+if ARGV[0] == 'watch'
+  listener = Listen.to 'templates', &rakyll
+  listener.start
+  sleep
+end
