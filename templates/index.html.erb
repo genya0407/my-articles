@@ -44,7 +44,7 @@
             <div style='flex: 3; margin: 5px; margin-left: 20px;'>
               <div>
                 <h3>
-                  <%= article.title %>
+                  <a style='text-decoration: none; color: black;' target='_blank' href='<%= article.entry_url %>'><%= article.title %></a>
                   <span style='margin-left: 0.5em; font-size: x-small;'>
                     <a style='color: red;' href='<%= article.hatebu_url %>'><%= article.hatebu_count %> users</a>
                   </span>
