@@ -34,7 +34,7 @@ def read_background_white(image_path)
   img_list.reverse.flatten_images
 end
 
-def compress_thumbnail(thumbnail_path, dest_dir, max_width: 200, max_height: 200)
+def resize_thumbnail(thumbnail_path, dest_dir, max_width: 200, max_height: 200)
   img = read_background_white(thumbnail_path)
   new_img = img.resize_to_fit(max_width, max_height)
   new_img.background_color = 'white'
@@ -51,9 +51,9 @@ articles = Dir.mktmpdir do |tmpdir|
   _articles.map do |article|
     unless article.icon_url.nil?
       original_fname = download_thumbnail(article.icon_url, tmpdir)
-      compressed_fname = compress_thumbnail("#{tmpdir}/#{original_fname}", tmpdir)
-      FileUtils.copy("#{tmpdir}/#{compressed_fname}", THUMBNAIL_DIR)
-      article.icon_url = "/#{THUMBNAIL_DIR}/#{compressed_fname}"
+      resized_fname = resize_thumbnail("#{tmpdir}/#{original_fname}", tmpdir)
+      FileUtils.copy("#{tmpdir}/#{resized_fname}", THUMBNAIL_DIR)
+      article.icon_url = "/#{THUMBNAIL_DIR}/#{resized_fname}"
     end
     article
   end
