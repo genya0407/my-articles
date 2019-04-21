@@ -9,3 +9,5 @@ Environment="FEEDS_DIR=/home/sangenya/feeds"
 Environment="ARTICLES_DIR=/home/sangenya/my-articles"
 ExecStart=/home/sangenya/my-articles/update.sh
 
+[Install]
+WantedBy=multi-user.target
