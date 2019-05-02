@@ -6,6 +6,7 @@ require 'securerandom'
 require 'rmagick'
 require 'uri'
 require 'listen'
+require 'fileutils'
 
 BLOG_FEED_PATH = ENV.fetch('BLOG_FEED_PATH')
 
@@ -31,6 +32,7 @@ end
 SourceFeed = Struct.new(:title, :url)
 
 THUMBNAIL_DIR = 'static/thumbnails'
+FileUtils.rm_r(Dir.glob("#{THUMBNAIL_DIR}/*"), secure: true)
 
 def download_thumbnail(icon_url, dest_dir)
   client = HTTPClient.new
