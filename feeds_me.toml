@@ -3,3 +3,6 @@ feed_url = "https://dawn.hateblo.jp/feed"
 
 [qiita]
 feed_url = "https://qiita.com/genya0407/feed"
+
+[genya0407.github.io]
+feed_url = "https://genya0407.github.io/feed.xml"
