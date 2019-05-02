@@ -86,6 +86,7 @@ rakyll = proc do
     create 'index.html' do
       @source_feeds = [
         SourceFeed.new('さんちゃのブログ', 'https://dawn.hateblo.jp'),
+        SourceFeed.new('さんちゃのブログ 2nd', 'https://genya0407.github.io/'),
         SourceFeed.new('genya0407 - Qiita', 'https://qiita.com/genya0407')
       ]
       @articles = articles
