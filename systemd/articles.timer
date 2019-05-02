@@ -1,5 +1,5 @@
 [Unit]
-Description=Heisei Internet History Notifier
+Description=Update articles
 
 [Timer]
 OnCalendar=*:0,15,30,45
