@@ -100,8 +100,45 @@ end
 
 rakyll.call
 
+SITE_URL = 'https://articles.kuminecraft.xyz'
+
+feed = proc do
+  require "rss"
+
+  rss = RSS::Maker.make('atom') do |maker|
+    maker.channel.about = "#{SITE_URL}/feed.xml"
+    maker.channel.title = "genya0407's articles"
+    maker.channel.description = "genya0407が書いたもの"
+    maker.channel.link = SITE_URL
+    maker.channel.author = 'Yusuke Sangenya'
+    maker.channel.date = article.first.published_at
+
+    maker.items.do_sort = true
+
+    articles.each do |article|
+      # ArticleAttributes = [:entry_url, :title, :abstract_html, :abstract, :icon_url, :published_at]
+
+      maker.items.new_item do |item|
+        item.link = article.entry_url
+        item.title = article.title
+        item.date = article.published_at
+      end
+    end
+
+    maker.image.title = 'Array-san'
+    maker.image.url = "#{SITE_URL}/static/images/array-san.jpg"
+  end
+
+  File.write('_site/feed.xml', rss.to_s)
+end
+
+feed.call
+
 if ARGV[0] == 'watch'
-  listener = Listen.to 'templates', &rakyll
+  listener = Listen.to 'templates' do
+    rakyll.call
+    feed.call
+  end
   listener.start
   sleep
 end
