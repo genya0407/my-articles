@@ -111,13 +111,11 @@ feed = proc do
     maker.channel.description = "genya0407が書いたもの"
     maker.channel.link = SITE_URL
     maker.channel.author = 'Yusuke Sangenya'
-    maker.channel.date = article.first.published_at
+    maker.channel.date = articles.first.published_at
 
     maker.items.do_sort = true
 
     articles.each do |article|
-      # ArticleAttributes = [:entry_url, :title, :abstract_html, :abstract, :icon_url, :published_at]
-
       maker.items.new_item do |item|
         item.link = article.entry_url
         item.title = article.title
