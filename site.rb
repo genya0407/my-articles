@@ -120,6 +120,7 @@ feed = proc do
         item.link = article.entry_url
         item.title = article.title
         item.date = article.published_at
+        item.description = article.abstract
       end
     end
 
