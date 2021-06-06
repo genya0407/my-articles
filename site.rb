@@ -31,8 +31,11 @@ end
 
 SourceFeed = Struct.new(:title, :url)
 
+FileUtils.rm_rf('_site/')
 THUMBNAIL_DIR = 'static/thumbnails'
-FileUtils.rm_r(Dir.glob("#{THUMBNAIL_DIR}/*"), secure: true)
+FileUtils.rm_rf(THUMBNAIL_DIR)
+FileUtils.mkdir(THUMBNAIL_DIR)
+File.write("#{THUMBNAIL_DIR}/.keep", '')
 
 def download_thumbnail(icon_url, dest_dir)
   client = HTTPClient.new
